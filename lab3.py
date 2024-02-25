@@ -10,6 +10,15 @@ def playfair_cipher(plaintext, key, mode):
             key_square += letter
     # Split the plaintext into digraphs, padding with 'x' if necessary
     plaintext = plaintext.lower().replace(' ', '').replace('j', 'i')
+    replaceplaintext = ''
+    for i in range(len(plaintext) - 1):
+        if plaintext[i] == plaintext[i + 1]:
+            replaceplaintext += plaintext[i]
+            replaceplaintext += 'x'
+        else:
+            replaceplaintext += plaintext[i]
+    replaceplaintext += plaintext[-1]
+    plaintext = replaceplaintext
     if len(plaintext) % 2 == 1:
         plaintext += 'x'
     digraphs = [plaintext[i:i + 2] for i in range(0, len(plaintext), 2)]
@@ -56,9 +65,9 @@ def playfair_cipher(plaintext, key, mode):
 
 
 # Example usage
-plaintext = 'Hey welcome to the encrypted world'
-key = 'ICE'
+plaintext = 'Information'
+key = 'COMPUTER'
 ciphertext = playfair_cipher(plaintext, key, 'encrypt')
-print(ciphertext)
+print('Cipher Text:', ciphertext)
 decrypted_text = playfair_cipher(ciphertext, key, 'decrypt')
-print(decrypted_text)  # (Note: 'x' is added as padding)
+print('Decrypted Text:', decrypted_text)  # (Note: 'x' is added as padding)
