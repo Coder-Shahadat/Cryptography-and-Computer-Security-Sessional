@@ -11,14 +11,20 @@ def playfair_cipher(plaintext, key, mode):
     # Split the plaintext into digraphs, padding with 'x' if necessary
     plaintext = plaintext.lower().replace(' ', '').replace('j', 'i')
     replaceplaintext = ''
-    for i in range(len(plaintext) - 1):
-        if plaintext[i] == plaintext[i + 1]:
-            replaceplaintext += plaintext[i]
-            replaceplaintext += 'x'
-        else:
-            replaceplaintext += plaintext[i]
-    replaceplaintext += plaintext[-1]
-    plaintext = replaceplaintext
+    if mode == 'encrypt':
+        it = 0
+        while it < len(plaintext) - 1:
+            if plaintext[it] == plaintext[it + 1]:
+                replaceplaintext += plaintext[it]
+                replaceplaintext += 'x'
+                it += 1
+            else:
+                replaceplaintext += plaintext[it]
+                replaceplaintext += plaintext[it + 1]
+                it += 2
+        replaceplaintext += plaintext[-1] if it < len(plaintext) else ''
+        plaintext = replaceplaintext
+
     if len(plaintext) % 2 == 1:
         plaintext += 'x'
     digraphs = [plaintext[i:i + 2] for i in range(0, len(plaintext), 2)]
@@ -65,8 +71,8 @@ def playfair_cipher(plaintext, key, mode):
 
 
 # Example usage
-plaintext = 'Information'
-key = 'COMPUTER'
+plaintext = 'caee'
+key = 'monkey'
 ciphertext = playfair_cipher(plaintext, key, 'encrypt')
 print('Cipher Text:', ciphertext)
 decrypted_text = playfair_cipher(ciphertext, key, 'decrypt')
