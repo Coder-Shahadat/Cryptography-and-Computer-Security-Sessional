@@ -2,9 +2,9 @@ import string
 
 
 def playfair_cipher(message, key, mode):
-    alphabet = string.ascii_lowercase.replace('j','i')
-    message=message.lower().replace(' ', '').replace('j', 'i')
-    key=key.lower().replace(' ', '').replace('j', 'i')
+    alphabet = string.ascii_lowercase.replace('j', '')
+    message = message.lower().replace(' ', '').replace('j', 'i')
+    key = key.lower().replace(' ', '').replace('j', 'i')
     keySquare = ''
     for char in key + alphabet:
         if char not in keySquare:
