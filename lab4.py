@@ -12,10 +12,10 @@ P = D(K,C) = inv(K)*C (mod X)  -- X is length of alphabet used
 """
 
 import numpy as np
+import string
 from egcd import egcd  # pip install egcd
 
-alphabet = "abcdefghijklmnopqrstuvwxyz"
-
+alphabet = string.ascii_lowercase
 letter_to_index = dict(zip(alphabet, range(len(alphabet))))
 index_to_letter = dict(zip(range(len(alphabet)), alphabet))
 
