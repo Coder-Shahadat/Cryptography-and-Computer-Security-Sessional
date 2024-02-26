@@ -32,8 +32,8 @@ def decrypt(encrypted_code, key):
 
 
 message = 'oak'
-# key = generateKey(len(message)).lower()
-key='son'   #coh
+key = generateKey(len(message)).lower()
+# key='son'   #coh
 encrypted_message, encrypted_code = encrypt(message, key)
 decrypted_message = decrypt(encrypted_code, key)
 print(encrypted_message)
