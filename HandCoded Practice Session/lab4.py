@@ -1,35 +1,60 @@
 import numpy as np
-import string
-from egcd import egcd
 
-alphabet = string.ascii_lowercase
+alphabet = "abcdefghijklmnopqrstuvwxyz"
 letter_to_index = dict(zip(alphabet, range(len(alphabet))))
 index_to_letter = dict(zip(range(len(alphabet)), alphabet))
 
 
-# def matrix_mod_inverse(matrix, modulus):
-#     det = int(np.linalg.det(matrix))
-#     det_inv = egcd(det, modulus)[1] % modulus
-#     matrix_modulus_inv = (
-#             det_inv * np.round(det * np.linalg.inv(matrix).astype(int)) % modulus
-#     )
-#     return matrix_modulus_inv
+def egcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    else:
+        gcd, x, y = egcd(b % a, a)
+        return gcd, y - (b // a) * x, x
+
+
+def mod_inv(det, modulus):
+    gcd, x, y = egcd(det, modulus)
+    if gcd != 1:
+        raise Exception("Matrix is not invertible.")
+    return (x % modulus + modulus) % modulus
+
 
 def matrix_mod_inv(matrix, modulus):
-    det = int(np.linalg.det(matrix))
-    det_inv = egcd(matrix, modulus)[1] % modulus
+    det = int(np.round(np.linalg.det(matrix)))
+    det_inv = mod_inv(det, modulus)
     matrix_modulus_inv = (
-            det_inv * np.round(np.linalg.inv(matrix).astype(int)) % modulus
+            det_inv * np.round(det * np.linalg.inv(matrix)).astype(int) % modulus
     )
-    return matrix_modulus_inv
+    return matrix_modulus_inv.astype(int)
 
 
-def encrypt(message, K):
-    encrypted_message = ""
-    message_in_number = []
-    for char in message:
-        message_in_number.append(letter_to_index[char])
-    split_p = [
-        message_in_number[i:i + int(K.shape[0])]
-        for i in range(0, len(message_in_number), int(K.shape[0]))
+def encrypt_decrypt(message, K):
+    msg = ""
+    message_in_numbers = [letter_to_index[letter] for letter in message]
+    split_P = [
+        message_in_numbers[i: i + len(K)]
+        for i in range(0, len(message_in_numbers), len(K))
     ]
+    for P in split_P:
+        P = np.transpose(np.asarray(P))[:, np.newaxis]
+        while P.shape[0] != len(K):
+            P = np.append(P, letter_to_index[" "])[:, np.newaxis]
+        numbers = np.dot(K, P) % len(alphabet)
+        n = numbers.shape[0]
+        for idx in range(n):
+            number = int(numbers[idx, 0])
+            msg += index_to_letter[number]
+    return msg
+
+
+message = "help"
+K = np.matrix([[3, 3], [2, 5]])
+Kinv = matrix_mod_inv(K, len(alphabet))
+
+encrypted_message = encrypt_decrypt(message, K)
+decrypted_message = encrypt_decrypt(encrypted_message, Kinv)
+
+print("Original message: " + message.upper())
+print("Encrypted message: " + encrypted_message.upper())
+print("Decrypted message: " + decrypted_message.upper())

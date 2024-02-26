@@ -1,106 +1,60 @@
-"""
-Implementation of Hill Cipher!
-
-Important notation:
-K = Matrix which is our 'Secret Key'
-P = Vector of plaintext (that has been mapped to numbers)
-C = Vector of Ciphered text (in numbers)
-
-C = E(K,P) = K*P (mod X) -- X is length of alphabet used
-P = D(K,C) = inv(K)*C (mod X)  -- X is length of alphabet used
-
-"""
-
 import numpy as np
-import string
-from egcd import egcd  # pip install egcd
 
-alphabet = string.ascii_lowercase
+alphabet = "abcdefghijklmnopqrstuvwxyz"
 letter_to_index = dict(zip(alphabet, range(len(alphabet))))
 index_to_letter = dict(zip(range(len(alphabet)), alphabet))
 
 
-def matrix_mod_inv(matrix, modulus):
-    """We find the matrix modulus inverse by
-    Step 1) Find determinant
-    Step 2) Find determinant value in a specific modulus (usually length of alphabet)
-    Step 3) Take that det_inv times the det*inverted matrix (this will then be the adjoint) in mod 26
-    """
+def egcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    else:
+        gcd, x, y = egcd(b % a, a)
+        return gcd, y - (b // a) * x, x
 
-    det = int(np.round(np.linalg.det(matrix)))  # Step 1)
-    det_inv = egcd(det, modulus)[1] % modulus  # Step 2)
+
+def mod_inv(det, modulus):
+    gcd, x, y = egcd(det, modulus)
+    if gcd != 1:
+        raise Exception("Matrix is not invertible.")
+    return (x % modulus + modulus) % modulus
+
+
+def matrix_mod_inv(matrix, modulus):
+    det = int(np.round(np.linalg.det(matrix)))
+    det_inv = mod_inv(det, modulus)
     matrix_modulus_inv = (
             det_inv * np.round(det * np.linalg.inv(matrix)).astype(int) % modulus
-    )  # Step 3)
+    )
+    return matrix_modulus_inv.astype(int)
 
-    return matrix_modulus_inv
 
-
-def encrypt(message, K):
-    encrypted = ""
-    message_in_numbers = []
-
-    for letter in message:
-        message_in_numbers.append(letter_to_index[letter])
-
+def encrypt_decrypt(message, K):
+    msg = ""
+    message_in_numbers = [letter_to_index[letter] for letter in message]
     split_P = [
-        message_in_numbers[i: i + int(K.shape[0])]
-        for i in range(0, len(message_in_numbers), int(K.shape[0]))
+        message_in_numbers[i: i + len(K)]
+        for i in range(0, len(message_in_numbers), len(K))
     ]
-
     for P in split_P:
         P = np.transpose(np.asarray(P))[:, np.newaxis]
-
-        while P.shape[0] != K.shape[0]:
+        while P.shape[0] != len(K):
             P = np.append(P, letter_to_index[" "])[:, np.newaxis]
-
         numbers = np.dot(K, P) % len(alphabet)
-        n = numbers.shape[0]  # length of encrypted message (in numbers)
-
-        # Map back to get encrypted text
-        for idx in range(n):
-            number = int(numbers[idx, 0])
-            encrypted += index_to_letter[number]
-
-    return encrypted
-
-
-def decrypt(cipher, Kinv):
-    decrypted = ""
-    cipher_in_numbers = []
-
-    for letter in cipher:
-        cipher_in_numbers.append(letter_to_index[letter])
-
-    split_C = [
-        cipher_in_numbers[i: i + int(Kinv.shape[0])]
-        for i in range(0, len(cipher_in_numbers), int(Kinv.shape[0]))
-    ]
-
-    for C in split_C:
-        C = np.transpose(np.asarray(C))[:, np.newaxis]
-        numbers = np.dot(Kinv, C) % len(alphabet)
         n = numbers.shape[0]
-
         for idx in range(n):
             number = int(numbers[idx, 0])
-            decrypted += index_to_letter[number]
+            msg += index_to_letter[number]
+    return msg
 
-    return decrypted
 
-
-# message = 'my life is potato'
-message = "Shahadat"
-message = message.lower()
+message = "help"
 K = np.matrix([[3, 3], [2, 5]])
-# K = np.matrix([[6, 24, 1], [13,16,10], [20,17,15]]) # for length of alphabet = 26
-# K = np.matrix([[3,10,20],[20,19,17], [23,78,17]]) # for length of alphabet = 27
 Kinv = matrix_mod_inv(K, len(alphabet))
 
-encrypted_message = encrypt(message, K)
-decrypted_message = decrypt(encrypted_message, Kinv)
+encrypted_message = encrypt_decrypt(message, K)
+decrypted_message = encrypt_decrypt(encrypted_message, Kinv)
 
-print("Original message: " + message)
-print("Encrypted message: " + encrypted_message)
-print("Decrypted message: " + decrypted_message)
-
+print("Original message: " + message.upper())
+print("Encrypted message: " + encrypted_message.upper())
+print("Decrypted message: " + decrypted_message.upper())
