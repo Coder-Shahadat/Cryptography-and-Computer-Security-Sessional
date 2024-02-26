@@ -19,7 +19,7 @@ def encrypt(message, key):
     for i in range(len(message)):
         xor = mp[message[i]] ^ mp[key[i]]
         encrypted_code.append(xor)
-        encrypted_message += mp2[(mp['a'] + xor) % 26]
+        encrypted_message += mp2[xor % 26]
     return encrypted_message, encrypted_code
 
 
@@ -32,8 +32,8 @@ def decrypt(encrypted_code, key):
 
 
 message = 'oak'
-key = generateKey(len(message)).lower()
-# key='son'   #coh
+# key = generateKey(len(message)).lower()
+key='son'   #coh
 encrypted_message, encrypted_code = encrypt(message, key)
 decrypted_message = decrypt(encrypted_code, key)
 print(encrypted_message)
