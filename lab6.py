@@ -1,5 +1,9 @@
 import random
 
+alphabet = "abcdefghijklmnopqrstuvwxyz".upper()
+mp = dict(zip(alphabet, range(len(alphabet))))
+mp2 = dict(zip(range(len(alphabet)), alphabet))
+
 
 def generate_key(length):
     key = ""
@@ -12,23 +16,23 @@ def encrypt(plaintext, key):
     ciphertext = ""
     cipherCode = []
     for i in range(len(plaintext)):
-        x = ord(plaintext[i]) ^ ord(key[i])
-        cipherCode.append(x)
-        ciphertext += chr(x % 26 + 65)
+        xor = mp[plaintext[i]] ^ mp[key[i]]
+        cipherCode.append(xor)
+        ciphertext += mp2[(mp['A'] + xor) % 26]
     return ciphertext, cipherCode
 
 
 def decrypt(cipherCode, key):
     plaintext = ""
     for i in range(len(cipherCode)):
-        x = (cipherCode[i] ^ ord(key[i]))
-        plaintext += chr(x)
+        xor = cipherCode[i] ^ mp[key[i]]
+        plaintext += mp2[xor % 26]
     return plaintext
 
 
-plaintext = "Information"
-key = generate_key(len(plaintext))  # Generate a random key
-
+plaintext = "OAK"
+plaintext = plaintext.upper()
+key = generate_key(len(plaintext))
 ciphertext, cipherCode = encrypt(plaintext, key)
 print("Ciphertext:", ciphertext)
 decryptedtext = decrypt(cipherCode, key)
