@@ -1,6 +1,7 @@
+import string
 import numpy as np
 
-alphabet = "abcdefghijklmnopqrstuvwxyz"
+alphabet = string.ascii_lowercase
 letter_to_index = dict(zip(alphabet, range(len(alphabet))))
 index_to_letter = dict(zip(range(len(alphabet)), alphabet))
 
