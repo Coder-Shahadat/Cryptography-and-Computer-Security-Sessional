@@ -1,50 +1,26 @@
-class MonoalphabeticCipher:
-    def __init__(self):
-        self.normal_char = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-                            'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-                            's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+normal_character = 'abcdefghijklmnopqrstuvwxyz'.upper()
+encoded_character = 'qwertyuiopasdfghjklzxcvbnm'.upper()
 
-        self.coded_char = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O',
-                           'P', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K',
-                           'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M']
-
-    def string_encryption(self, s):
-        encrypted_string = ""
-        for char in s:
-            for i in range(26):
-                if char == self.normal_char[i]:
-                    encrypted_string += self.coded_char[i]
-                    break
-                elif char < 'a' or char > 'z':
-                    encrypted_string += char
-                    break
-        return encrypted_string
-
-    def string_decryption(self, s):
-        decrypted_string = ""
-        for char in s:
-            for i in range(26):
-                if char == self.coded_char[i]:
-                    decrypted_string += self.normal_char[i]
-                    break
-                elif char < 'A' or char > 'Z':
-                    decrypted_string += char
-                    break
-        return decrypted_string
+mp = dict(zip(normal_character, encoded_character))
+mp2 = dict(zip(encoded_character, normal_character))
 
 
-def main():
-    cipher = MonoalphabeticCipher()
-    plain_text = "I am ICEIAN"
-
-    print("Plain text:", plain_text)
-
-    # Changing the whole string to lowercase
-    encrypted_message = cipher.string_encryption(plain_text.lower())
-    print("Encrypted message:", encrypted_message)
-
-    decrypted_message = cipher.string_decryption(encrypted_message)
-    print("Decrypted message:", decrypted_message)
+def mono_alphabetic_encrypt(message):
+    encrypted_message = ''
+    for char in message:
+        encrypted_message += mp[char]
+    return encrypted_message
 
 
-main()
+def mono_alphabetic_decrypt(encrypted_message):
+    decrypted_message = ''
+    for char in encrypted_message:
+        decrypted_message += mp2[char]
+    return decrypted_message
+
+
+message = input('Enter message: ').upper()
+encrypted_message = mono_alphabetic_encrypt(message)
+decrypted_message = mono_alphabetic_decrypt(encrypted_message)
+print('Encrypted message: ', encrypted_message)
+print('Decrypted message: ', decrypted_message)

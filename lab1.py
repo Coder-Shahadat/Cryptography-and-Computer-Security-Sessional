@@ -1,32 +1,28 @@
-def caesar_encrypt(plaintext, shift):
-    encrypted_text = ""
-    for char in plaintext:
-        if char.isalpha():
-            if char.islower():
-                encrypted_text += chr((ord(char) + shift - ord('a')) % 26 + ord('a'))
-            else:
-                encrypted_text += chr((ord(char) + shift - ord('A')) % 26 + ord('A'))
-        else:
-            encrypted_text += char
-    return encrypted_text
+import string
+
+alphabet = string.ascii_uppercase
+# letter to number mapping
+mp = dict(zip(alphabet, range(len(alphabet))))
+# number to letter mapping
+mp2 = dict(zip(range(len(alphabet)), alphabet))
 
 
-def caesar_decrypt(ciphertext, shift):
-    decrypted_text = ""
-    for char in ciphertext:
-        if char.isalpha():
-            if char.islower():
-                decrypted_text += chr((ord(char) - shift - ord('a')) % 26 + ord('a'))
-            else:
-                decrypted_text += chr((ord(char) - shift - ord('A')) % 26 + ord('A'))
-        else:
-            decrypted_text += char
-    return decrypted_text
+def caesar_encrypt(message, shift):
+    encrypted_message = ''
+    for char in message:
+        encrypted_message += mp2[(mp[char] + shift) % 26]
+    return encrypted_message
 
 
-plaintext = "hello"
-shift = 3
-ciphertext = caesar_encrypt(plaintext, shift)
-print(f"Caesar Cipher Encryption: {ciphertext}")
-plaintext = caesar_decrypt(ciphertext, 3)
-print(f"Caesar Cipher Decryption: {plaintext}")
+def caesar_decrypt(caesar_message, shift):
+    decrypted_message = ''
+    for char in caesar_message:
+        decrypted_message += mp2[(mp[char] - shift + 26) % 26]  # plus 26 is used to prevent negative value
+    return decrypted_message
+
+
+message = input("Enter Message to encrypt: ").upper()
+shift = int(input("Enter Shift To Encrypt: "))
+encrypted_message = caesar_encrypt(message, shift)
+print('Encrypted Message:', encrypted_message)
+print('Decrypted Message:', caesar_decrypt(encrypted_message, shift))

@@ -1,39 +1,40 @@
 import random
+import string
 
-alphabet = "abcdefghijklmnopqrstuvwxyz".upper()
+alphabet = string.ascii_lowercase
 mp = dict(zip(alphabet, range(len(alphabet))))
 mp2 = dict(zip(range(len(alphabet)), alphabet))
 
 
-def generate_key(length):
-    key = ""
+def generateKey(length):
+    key = ''
     for i in range(length):
-        key += chr(random.randint(65, 90))  # ASCII codes for A-Z
+        key += chr(random.randint(65, 90))
     return key
 
 
-def encrypt(plaintext, key):
-    ciphertext = ""
-    cipherCode = []
-    for i in range(len(plaintext)):
-        xor = mp[plaintext[i]] ^ mp[key[i]]
-        cipherCode.append(xor)
-        ciphertext += mp2[(mp['A'] + xor) % 26]
-    return ciphertext, cipherCode
+def encrypt(message, key):
+    encrypted_message = ''
+    encrypted_code = []
+    for i in range(len(message)):
+        xor = mp[message[i]] ^ mp[key[i]]
+        encrypted_code.append(xor)
+        encrypted_message += mp2[xor % 26]
+    return encrypted_message, encrypted_code
 
 
-def decrypt(cipherCode, key):
-    plaintext = ""
-    for i in range(len(cipherCode)):
-        xor = cipherCode[i] ^ mp[key[i]]
-        plaintext += mp2[xor % 26]
-    return plaintext
+def decrypt(encrypted_code, key):
+    decrypted_message = ''
+    for i in range(len(encrypted_code)):
+        xor = encrypted_code[i] ^ mp[key[i]]
+        decrypted_message += mp2[xor % 26]
+    return decrypted_message
 
 
-plaintext = "OAK"
-plaintext = plaintext.upper()
-key = generate_key(len(plaintext))
-ciphertext, cipherCode = encrypt(plaintext, key)
-print("Ciphertext:", ciphertext)
-decryptedtext = decrypt(cipherCode, key)
-print("Decrypted text:", decryptedtext)
+message = 'oak'
+key = generateKey(len(message)).lower()
+# key='son'   #coh
+encrypted_message, encrypted_code = encrypt(message, key)
+decrypted_message = decrypt(encrypted_code, key)
+print(encrypted_message)
+print(decrypted_message)

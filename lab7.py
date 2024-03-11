@@ -1,45 +1,32 @@
-def brute_force_decrypt(ciphertext):
-    for shift in range(26):
-        decrypted_text = caesar_decrypt(ciphertext, shift)
-        print(f"Shift {shift}: {decrypted_text}")
+import string
+
+alphabet = string.ascii_lowercase
+mp = dict(zip(alphabet, range(len(alphabet))))
+mp2 = dict(zip(range(len(alphabet)), alphabet))
 
 
-def brute_force_encrypt(plainText):
-    for shift in range(26):
-        encrypted_text = caesar_encrypt(plainText, shift)
-        print(f"Shift {shift}: {encrypted_text}")
+def bruteforce_encrypt(message):
+    for i in range(26):
+        encrypted_message = ''
+        for j in range(len(message)):
+            encrypted_message += mp2[(mp[message[j]] + i) % 26]
+        print('%d' % i, encrypted_message)
 
 
-def caesar_encrypt(plainText, shift):
-    encrypted_text = ""
-    for char in plainText:
-        if char.isalpha():
-            if char.islower():
-                encrypted_text += chr((ord(char) + shift - ord('a')) % 26 + ord('a'))
-            else:
-                encrypted_text += chr((ord(char) + shift - ord('A')) % 26 + ord('A'))
-        else:
-            encrypted_text += char
-    return encrypted_text
+def bruteforce_decrypt(encrypted_message):
+    for i in range(26):
+        decrypted_message = ''
+        for j in range(len(encrypted_message)):
+            decrypted_message += mp2[(mp[encrypted_message[j]] - i + 26) % 26]
+        print('%d' % i, decrypted_message)
 
 
-def caesar_decrypt(ciphertext, shift):
-    decrypted_text = ""
-    for char in ciphertext:
-        if char.isalpha():
-            if char.islower():
-                decrypted_text += chr((ord(char) - shift - ord('a')) % 26 + ord('a'))
-            else:
-                decrypted_text += chr((ord(char) - shift - ord('A')) % 26 + ord('A'))
-        else:
-            decrypted_text += char
-    return decrypted_text
-
-
-plantext='hello'
-print('Brute Force Encryption for Caesar Cipher:')
-brute_force_encrypt(plantext)
-
-ciphertext = "ifmmp"
-print("\nBrute Force Decryption for Caesar Cipher:")
-brute_force_decrypt(ciphertext)
+print('-' * 50)
+print('Encryption')
+print('-' * 50)
+bruteforce_encrypt('hello')
+print('-' * 50)
+print('Decryption')
+print('-' * 50)
+bruteforce_decrypt('khoor')
+print('-' * 50)
